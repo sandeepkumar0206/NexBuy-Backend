@@ -1,6 +1,6 @@
 package com.nexbuy.entity;
 
 public enum Role {
-    CUSTOMER,
+    USER,
     ADMIN
 }
