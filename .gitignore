@@ -11,5 +11,26 @@ target/
 # Secrets — never commit
 .env
 .env.local
-patterns/
+nexbuy-backend.code-workspace
 .env.*.local
+
+abstractfactory
+adapter
+bridge
+chainofresponsibility       
+command
+composite
+decorator
+facade
+factory
+flyweight
+iterator
+mediator
+memento
+observer
+prototype
+proxy
+state
+strategy
+templatemethod
+visitor

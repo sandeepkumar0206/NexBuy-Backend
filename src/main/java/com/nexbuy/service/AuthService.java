@@ -11,6 +11,7 @@ import com.nexbuy.patterns.builder.UserBuilder;
 import com.nexbuy.repository.UserRepository;
 import com.nexbuy.security.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,19 +62,19 @@ public class AuthService {
         String refreshToken = request.getRefreshToken();
         try {
             if (!jwtService.isRefreshToken(refreshToken)) {
-                throw new ApiException("Invalid refresh token");
+                throw new ApiException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
             }
             String email = jwtService.extractEmail(refreshToken);
             User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new ApiException("User not found"));
+                    .orElseThrow(() -> new ApiException("User not found", HttpStatus.NOT_FOUND));
             if (!jwtService.isTokenValid(refreshToken, email)) {
-                throw new ApiException("Refresh token expired");
+                throw new ApiException("Refresh token expired", HttpStatus.UNAUTHORIZED);
             }
             return toAuthResponse(user);
         } catch (ApiException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new ApiException("Invalid refresh token");
+            throw new ApiException("Invalid refresh token", HttpStatus.UNAUTHORIZED);
         }
     }
 
