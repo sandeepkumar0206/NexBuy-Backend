@@ -12,10 +12,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: GET /api/products, /search, /category/{slug}, /{id} | BR: thin delegation to the service */
+/** Unit tests for ProductController. */
 class ProductControllerTest {
 
-    // MEDIUM
     @Test
     @DisplayName("list forwards all six query parameters to the service")
     void list_forwards_all_six_query_parameters_to_the_service() throws Exception {
@@ -39,7 +38,6 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("search maps q to the query argument")
     void search_maps_q_to_the_query_argument() throws Exception {
@@ -61,7 +59,6 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("byCategory forwards the slug and paging arguments")
     void bycategory_forwards_the_slug_and_paging_arguments() throws Exception {
@@ -83,7 +80,6 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("getById forwards the id to the service")
     void getbyid_forwards_the_id_to_the_service() throws Exception {

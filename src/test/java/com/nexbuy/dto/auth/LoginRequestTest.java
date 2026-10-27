@@ -12,10 +12,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 2 | AC: LoginRequest DTO | BR: email format, password required */
+/** Unit tests for LoginRequest. */
 class LoginRequestTest {
 
-    // HIGH
     @Test
     @DisplayName("a malformed email and blank password violate constraints")
     void a_malformed_email_and_blank_password_violate_constraints() throws Exception {

@@ -13,10 +13,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-/** Day 2 | AC: login authenticates against stored users | BR: role becomes ROLE_<ROLE> authority */
+/** Unit tests for CustomUserDetailsService. */
 class CustomUserDetailsServiceTest {
 
-    // HIGH
     @Test
     @DisplayName("loadUserByUsername maps a stored admin to credentials and a ROLE_ADMIN authority")
     void loaduserbyusername_maps_a_stored_admin_to_credentials_and_a_role_admin_authority() throws Exception {
@@ -38,7 +37,6 @@ class CustomUserDetailsServiceTest {
         assertEquals("ROLE_ADMIN", details.getAuthorities().iterator().next().getAuthority());
     }
 
-    // HIGH
     @Test
     @DisplayName("loadUserByUsername throws UsernameNotFoundException for an unknown email")
     void loaduserbyusername_throws_usernamenotfoundexception_for_an_unknown_email() throws Exception {

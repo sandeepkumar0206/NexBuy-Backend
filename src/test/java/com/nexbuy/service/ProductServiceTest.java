@@ -20,10 +20,9 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 
-/** Day 4 | AC: product list, detail, search, by-category APIs with paging/sort/filter | BR: size clamped to max, price range validated, 404 for missing */
+/** Unit tests for ProductService. */
 class ProductServiceTest {
 
-    // HIGH
     @Test
     @DisplayName("list applies the default page size and newest sort when nothing is requested")
     void list_applies_the_default_page_size_and_newest_sort_when_nothing_is_requested() throws Exception {
@@ -52,7 +51,6 @@ class ProductServiceTest {
         assertSame(expected, response);
     }
 
-    // HIGH
     @Test
     @DisplayName("list clamps an oversized page size and a negative page number")
     void list_clamps_an_oversized_page_size_and_a_negative_page_number() throws Exception {
@@ -77,7 +75,6 @@ class ProductServiceTest {
         verify(factory).productList(any());
     }
 
-    // HIGH
     @Test
     @DisplayName("list falls back to the default size when size is zero or negative")
     void list_falls_back_to_the_default_size_when_size_is_zero_or_negative() throws Exception {
@@ -101,7 +98,6 @@ class ProductServiceTest {
         assertEquals(Sort.by(Sort.Direction.ASC, "price").and(Sort.by(Sort.Direction.ASC, "id")), pageable.getValue().getSort());
     }
 
-    // HIGH
     @Test
     @DisplayName("list rejects a negative minPrice before touching the repository")
     void list_rejects_a_negative_minprice_before_touching_the_repository() throws Exception {
@@ -121,7 +117,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("list rejects a negative maxPrice before touching the repository")
     void list_rejects_a_negative_maxprice_before_touching_the_repository() throws Exception {
@@ -141,7 +136,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("list rejects a minPrice greater than maxPrice")
     void list_rejects_a_minprice_greater_than_maxprice() throws Exception {
@@ -161,7 +155,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("list rejects an unsupported sort key and lists the allowed keys")
     void list_rejects_an_unsupported_sort_key_and_lists_the_allowed_keys() throws Exception {
@@ -181,7 +174,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("getById returns the factory response for an existing product")
     void getbyid_returns_the_factory_response_for_an_existing_product() throws Exception {
@@ -207,7 +199,6 @@ class ProductServiceTest {
         verify(factory, times(1)).product(product);
     }
 
-    // HIGH
     @Test
     @DisplayName("getById throws 404 for an unknown product")
     void getbyid_throws_404_for_an_unknown_product() throws Exception {
@@ -229,7 +220,6 @@ class ProductServiceTest {
         verify(factory, never()).product(any());
     }
 
-    // HIGH
     @Test
     @DisplayName("search queries with the requested page, size and sort")
     void search_queries_with_the_requested_page_size_and_sort() throws Exception {
@@ -257,7 +247,6 @@ class ProductServiceTest {
         assertSame(expected, response);
     }
 
-    // HIGH
     @Test
     @DisplayName("search rejects a blank query")
     void search_rejects_a_blank_query() throws Exception {
@@ -277,7 +266,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("search rejects a null query")
     void search_rejects_a_null_query() throws Exception {
@@ -297,7 +285,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("search rejects a query longer than 100 characters")
     void search_rejects_a_query_longer_than_100_characters() throws Exception {
@@ -318,7 +305,6 @@ class ProductServiceTest {
         TestFixtures.verifyNoPageQuery(products);
     }
 
-    // HIGH
     @Test
     @DisplayName("listByCategorySlug looks up the category and pages its products")
     void listbycategoryslug_looks_up_the_category_and_pages_its_products() throws Exception {
@@ -347,7 +333,6 @@ class ProductServiceTest {
         verify(factory).productList(page);
     }
 
-    // HIGH
     @Test
     @DisplayName("listByCategorySlug throws 404 for an unknown category")
     void listbycategoryslug_throws_404_for_an_unknown_category() throws Exception {

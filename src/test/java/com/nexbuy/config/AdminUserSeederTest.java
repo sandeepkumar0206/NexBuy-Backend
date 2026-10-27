@@ -13,10 +13,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-/** Day 2 | AC: seed one admin user | BR: idempotent, BCrypt hash, role ADMIN */
+/** Unit tests for AdminUserSeeder. */
 class AdminUserSeederTest {
 
-    // HIGH
     @Test
     @DisplayName("run seeds a hashed ADMIN user when none exists")
     void run_seeds_a_hashed_admin_user_when_none_exists() throws Exception {
@@ -45,7 +44,6 @@ class AdminUserSeederTest {
         assertEquals("NexBuy Admin", saved.getValue().getName());
     }
 
-    // HIGH
     @Test
     @DisplayName("run does nothing when the admin already exists")
     void run_does_nothing_when_the_admin_already_exists() throws Exception {

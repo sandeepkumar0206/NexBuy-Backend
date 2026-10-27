@@ -13,10 +13,9 @@ import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.mockito.ArgumentCaptor;
 
-/** Day 4 | AC: seed demo catalog | BR: idempotent, 5 categories, 25 products */
+/** Unit tests for CatalogSeeder. */
 class CatalogSeederTest {
 
-    // MEDIUM
     @Test
     @DisplayName("run does nothing when products already exist")
     void run_does_nothing_when_products_already_exist() throws Exception {
@@ -38,7 +37,6 @@ class CatalogSeederTest {
         verifyNoInteractions(categories);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("run seeds five categories and twenty-five products on an empty catalog")
     void run_seeds_five_categories_and_twenty_five_products_on_an_empty_catalog() throws Exception {
@@ -66,7 +64,6 @@ class CatalogSeederTest {
                 savedCategories.getAllValues().stream().map(Category::getSlug).collect(java.util.stream.Collectors.toSet()));
     }
 
-    // MEDIUM
     @Test
     @DisplayName("run gives every seeded product two images, a category and a unique slug, with one item out of stock")
     void run_gives_every_seeded_product_two_images_a_category_and_a_unique_slug_with_one_item_out_of_stock() throws Exception {
@@ -93,7 +90,6 @@ class CatalogSeederTest {
         assertEquals(List.of("Cycling Helmet"), seeded.stream().filter(p -> p.getStock() == 0).map(Product::getName).toList());
     }
 
-    // MEDIUM
     @Test
     @DisplayName("run reuses categories that already exist instead of saving them again")
     void run_reuses_categories_that_already_exist_instead_of_saving_them_again() throws Exception {

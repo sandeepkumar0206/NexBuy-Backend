@@ -19,10 +19,9 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
-/** Day 4 | AC: filter by category/price, text search | BR: null filter = skip, LIKE wildcards escaped */
+/** Unit tests for ProductSpecifications. */
 class ProductSpecificationsTest {
 
-    // HIGH
     @Test
     @DisplayName("inCategory returns no predicate when the id is null")
     void incategory_returns_no_predicate_when_the_id_is_null() throws Exception {
@@ -44,7 +43,6 @@ class ProductSpecificationsTest {
         verifyNoInteractions(cb);
     }
 
-    // HIGH
     @Test
     @DisplayName("inCategory compares the category id")
     void incategory_compares_the_category_id() throws Exception {
@@ -73,7 +71,6 @@ class ProductSpecificationsTest {
         verify(cb).equal(idPath, 5L);
     }
 
-    // HIGH
     @Test
     @DisplayName("priceAtLeast returns no predicate when the bound is null")
     void priceatleast_returns_no_predicate_when_the_bound_is_null() throws Exception {
@@ -95,7 +92,6 @@ class ProductSpecificationsTest {
         verifyNoInteractions(cb);
     }
 
-    // HIGH
     @Test
     @DisplayName("priceAtLeast builds a greater-than-or-equal predicate")
     void priceatleast_builds_a_greater_than_or_equal_predicate() throws Exception {
@@ -122,7 +118,6 @@ class ProductSpecificationsTest {
         verify(cb).greaterThanOrEqualTo(pricePath, min);
     }
 
-    // HIGH
     @Test
     @DisplayName("priceAtMost returns no predicate when the bound is null")
     void priceatmost_returns_no_predicate_when_the_bound_is_null() throws Exception {
@@ -144,7 +139,6 @@ class ProductSpecificationsTest {
         verifyNoInteractions(cb);
     }
 
-    // HIGH
     @Test
     @DisplayName("priceAtMost builds a less-than-or-equal predicate")
     void priceatmost_builds_a_less_than_or_equal_predicate() throws Exception {
@@ -171,7 +165,6 @@ class ProductSpecificationsTest {
         verify(cb).lessThanOrEqualTo(pricePath, max);
     }
 
-    // HIGH
     @Test
     @DisplayName("textMatches returns no predicate for null or blank terms")
     void textmatches_returns_no_predicate_for_null_or_blank_terms() throws Exception {
@@ -195,7 +188,6 @@ class ProductSpecificationsTest {
         verifyNoInteractions(cb);
     }
 
-    // HIGH
     @Test
     @DisplayName("textMatches lowercases the term, escapes LIKE wildcards and ORs name with description")
     void textmatches_lowercases_the_term_escapes_like_wildcards_and_ors_name_with_description() throws Exception {

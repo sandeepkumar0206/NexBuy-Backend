@@ -17,10 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-/** Day 2 | AC: JwtAuthFilter (OncePerRequestFilter) | BR: bad tokens never block public endpoints */
+/** Unit tests for JwtAuthFilter. */
 class JwtAuthFilterTest {
 
-    // CRITICAL
     @Test
     @DisplayName("a request without an Authorization header passes through anonymous")
     void a_request_without_an_authorization_header_passes_through_anonymous() throws Exception {
@@ -47,7 +46,6 @@ class JwtAuthFilterTest {
         verifyNoInteractions(users);
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a non-Bearer Authorization header is ignored")
     void a_non_bearer_authorization_header_is_ignored() throws Exception {
@@ -74,7 +72,6 @@ class JwtAuthFilterTest {
         verifyNoInteractions(users);
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a valid access token authenticates the request with the user's roles")
     void a_valid_access_token_authenticates_the_request_with_the_user_s_roles() throws Exception {
@@ -109,7 +106,6 @@ class JwtAuthFilterTest {
         SecurityContextHolder.clearContext();
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a refresh token is not accepted as an access credential")
     void a_refresh_token_is_not_accepted_as_an_access_credential() throws Exception {
@@ -137,7 +133,6 @@ class JwtAuthFilterTest {
         assertNotNull(chain.getRequest());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("an unparseable token is swallowed and the request continues anonymous")
     void an_unparseable_token_is_swallowed_and_the_request_continues_anonymous() throws Exception {
@@ -165,7 +160,6 @@ class JwtAuthFilterTest {
         verify(users, never()).loadUserByUsername(anyString());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a token that fails validation does not authenticate")
     void a_token_that_fails_validation_does_not_authenticate() throws Exception {
@@ -197,7 +191,6 @@ class JwtAuthFilterTest {
         assertNotNull(chain.getRequest());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a token for an unknown user is swallowed and the request continues anonymous")
     void a_token_for_an_unknown_user_is_swallowed_and_the_request_continues_anonymous() throws Exception {

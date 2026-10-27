@@ -8,10 +8,9 @@ import org.junit.jupiter.api.Test;
 import com.nexbuy.entity.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: builder used by seeder | BR: fluent construction */
+/** Unit tests for CategoryBuilder. */
 class CategoryBuilderTest {
 
-    // LOW
     @Test
     @DisplayName("build maps name, slug and description")
     void build_maps_name_slug_and_description() throws Exception {

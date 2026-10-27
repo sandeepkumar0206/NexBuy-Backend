@@ -15,10 +15,9 @@ import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.HttpStatus;
 
-/** Day 4 | AC: category list and detail APIs | BR: sorted by name, 404 for unknown slug */
+/** Unit tests for CategoryService. */
 class CategoryServiceTest {
 
-    // MEDIUM
     @Test
     @DisplayName("list maps every repository category through the factory in repository order")
     void list_maps_every_repository_category_through_the_factory_in_repository_order() throws Exception {
@@ -47,7 +46,6 @@ class CategoryServiceTest {
         verify(categories).findAllByOrderByNameAsc();
     }
 
-    // MEDIUM
     @Test
     @DisplayName("list returns an empty list when there are no categories")
     void list_returns_an_empty_list_when_there_are_no_categories() throws Exception {
@@ -69,7 +67,6 @@ class CategoryServiceTest {
         verifyNoInteractions(factory);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("getBySlug returns the mapped category")
     void getbyslug_returns_the_mapped_category() throws Exception {
@@ -95,7 +92,6 @@ class CategoryServiceTest {
         verify(factory, times(1)).category(books);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("getBySlug throws 404 for an unknown slug")
     void getbyslug_throws_404_for_an_unknown_slug() throws Exception {

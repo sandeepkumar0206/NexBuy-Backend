@@ -9,10 +9,9 @@ import com.nexbuy.patterns.chainofresponsibility.*;
 import com.nexbuy.patterns.observer.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Pattern demo | AC: wire observer and chain at startup | BR: audit listener subscribed, stock handler linked to address handler */
+/** Unit tests for PatternWiringConfig. */
 class PatternWiringConfigTest {
 
-    // MEDIUM
     @Test
     @DisplayName("wirePatterns subscribes the audit listener and links the validation chain")
     void wirepatterns_subscribes_the_audit_listener_and_links_the_validation_chain() throws Exception {
