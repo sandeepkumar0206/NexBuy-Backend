@@ -23,6 +23,29 @@ import org.springframework.data.jpa.domain.Specification;
 class ProductSpecificationsTest {
 
     @Test
+    @DisplayName("inStock requires stock greater than zero")
+    void instock_requires_stock_greater_than_zero() throws Exception {
+        // Arrange
+        // root.get("stock") and a greaterThan predicate
+        Root<Product> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Path stockPath = mock(Path.class);
+        Predicate greater = mock(Predicate.class);
+        when(root.get("stock")).thenReturn(stockPath);
+        when(cb.greaterThan(stockPath, 0)).thenReturn(greater);
+
+        // Act
+        // evaluate
+        Predicate predicate = ProductSpecifications.inStock().toPredicate(root, query, cb);
+
+        // Assert
+        // the greaterThan predicate is returned
+        assertSame(greater, predicate);
+        verify(cb).greaterThan(stockPath, 0);
+    }
+
+    @Test
     @DisplayName("inCategory returns no predicate when the id is null")
     void incategory_returns_no_predicate_when_the_id_is_null() throws Exception {
         // Arrange

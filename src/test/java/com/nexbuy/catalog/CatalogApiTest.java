@@ -10,6 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -72,6 +75,16 @@ class CatalogApiTest {
                 .andExpect(jsonPath("$.content[0].name", is("Cycling Helmet")))
                 .andExpect(jsonPath("$.content[0].category.slug", is("sports-outdoors")))
                 .andExpect(jsonPath("$.content[0].images", hasSize(2)));
+    }
+
+    @Test
+    void featuredReturnsEightInStockProductsNewestFirst() throws Exception {
+        mockMvc.perform(get("/api/products/featured"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(8)))
+                .andExpect(jsonPath("$[0].name", is("Insulated Hiking Backpack")))
+                .andExpect(jsonPath("$[*].name", not(hasItem("Cycling Helmet"))))
+                .andExpect(jsonPath("$[*].inStock", everyItem(is(true))));
     }
 
     @Test

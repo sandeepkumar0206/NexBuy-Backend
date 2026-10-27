@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -29,6 +30,11 @@ public class ProductController {
             @RequestParam(required = false) BigDecimal maxPrice
     ) {
         return productService.list(page, size, sort, categoryId, minPrice, maxPrice);
+    }
+
+    @GetMapping("/featured")
+    public List<ProductResponse> featured() {
+        return productService.featured();
     }
 
     @GetMapping("/search")

@@ -16,6 +16,27 @@ import org.junit.jupiter.api.DisplayName;
 class ProductControllerTest {
 
     @Test
+    @DisplayName("featured returns the service list")
+    void featured_returns_the_service_list() throws Exception {
+        // Arrange
+        // service returns one product
+        ProductService service = mock(ProductService.class);
+        List<ProductResponse> expected = List.of(TestFixtures.productResponse(1L));
+        when(service.featured()).thenReturn(expected);
+        ProductController controller = new ProductController(service);
+
+        // Act
+        // call the endpoint method
+        List<ProductResponse> actual = controller.featured();
+
+        // Assert
+        // pass-through
+        assertSame(expected, actual);
+        verify(service).featured();
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
     @DisplayName("list forwards all six query parameters to the service")
     void list_forwards_all_six_query_parameters_to_the_service() throws Exception {
         // Arrange

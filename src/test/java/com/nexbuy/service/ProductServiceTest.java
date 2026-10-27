@@ -24,6 +24,53 @@ import org.springframework.http.HttpStatus;
 class ProductServiceTest {
 
     @Test
+    @DisplayName("featured returns the 8 newest in-stock products")
+    void featured_returns_the_8_newest_in_stock_products() throws Exception {
+        // Arrange
+        // repository returns two products, mock factory
+        ProductRepository products = mock(ProductRepository.class);
+        CatalogResponseFactory factory = mock(CatalogResponseFactory.class);
+        Category books = TestFixtures.category(1L, "Books", "books");
+        Product first = TestFixtures.product(2L, "Novel", "novel", "10.00", 5, books);
+        Product second = TestFixtures.product(1L, "Atlas", "atlas", "20.00", 3, books);
+        when(products.findAll(TestFixtures.anySpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(first, second)));
+        when(factory.product(first)).thenReturn(TestFixtures.productResponse(2L));
+        when(factory.product(second)).thenReturn(TestFixtures.productResponse(1L));
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), factory);
+
+        // Act
+        // featured
+        List<ProductResponse> result = service.featured();
+
+        // Assert
+        // page 0, size 8, newest first, order kept
+        ArgumentCaptor<Pageable> pageable = ArgumentCaptor.forClass(Pageable.class);
+        verify(products).findAll(TestFixtures.anySpec(), pageable.capture());
+        assertEquals(0, pageable.getValue().getPageNumber());
+        assertEquals(8, pageable.getValue().getPageSize());
+        assertEquals(Sort.by(Sort.Direction.DESC, "id"), pageable.getValue().getSort());
+        assertEquals(List.of(2L, 1L), result.stream().map(ProductResponse::id).toList());
+    }
+
+    @Test
+    @DisplayName("featured returns an empty list when nothing is in stock")
+    void featured_returns_an_empty_list_when_nothing_is_in_stock() throws Exception {
+        // Arrange
+        // repository returns an empty page
+        ProductRepository products = mock(ProductRepository.class);
+        when(products.findAll(TestFixtures.anySpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), mock(CatalogResponseFactory.class));
+
+        // Act
+        // featured
+        List<ProductResponse> result = service.featured();
+
+        // Assert
+        // empty, not null
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     @DisplayName("list applies the default page size and newest sort when nothing is requested")
     void list_applies_the_default_page_size_and_newest_sort_when_nothing_is_requested() throws Exception {
         // Arrange
