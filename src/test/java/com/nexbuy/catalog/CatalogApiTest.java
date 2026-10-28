@@ -104,6 +104,36 @@ class CatalogApiTest {
     }
 
     @Test
+    void pageBeyondTheLastReturnsAnEmptyPageWithTheSameTotals() throws Exception {
+        mockMvc.perform(get("/api/products").param("page", "99"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.page", is(99)))
+                .andExpect(jsonPath("$.totalElements", is(25)))
+                .andExpect(jsonPath("$.totalPages", is(3)))
+                .andExpect(jsonPath("$.last", is(true)));
+    }
+
+    @Test
+    void negativePageAndZeroSizeFallBackToDefaults() throws Exception {
+        mockMvc.perform(get("/api/products").param("page", "-4").param("size", "0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page", is(0)))
+                .andExpect(jsonPath("$.size", is(12)))
+                .andExpect(jsonPath("$.content", hasSize(12)));
+    }
+
+    @Test
+    void sortingKeepsWorkingAcrossPages() throws Exception {
+        mockMvc.perform(get("/api/products").param("sort", "price_asc").param("size", "5").param("page", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(5)))
+                .andExpect(jsonPath("$.page", is(1)))
+                .andExpect(jsonPath("$.totalPages", is(5)))
+                .andExpect(jsonPath("$.first", is(false)));
+    }
+
+    @Test
     void sortsByPriceAndName() throws Exception {
         mockMvc.perform(get("/api/products").param("sort", "price_asc"))
                 .andExpect(status().isOk())
