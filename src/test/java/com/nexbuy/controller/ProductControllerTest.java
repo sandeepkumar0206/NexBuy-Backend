@@ -102,6 +102,27 @@ class ProductControllerTest {
     }
 
     @Test
+    @DisplayName("getBySlug forwards the slug to the service")
+    void getbyslug_forwards_the_slug_to_the_service() throws Exception {
+        // Arrange
+        // service returns a canned product
+        ProductService service = mock(ProductService.class);
+        ProductResponse expected = TestFixtures.productResponse(7L);
+        when(service.getBySlug("yoga-mat-pro")).thenReturn(expected);
+        ProductController controller = new ProductController(service);
+
+        // Act
+        // call the endpoint method
+        ProductResponse actual = controller.getBySlug("yoga-mat-pro");
+
+        // Assert
+        // pass-through
+        assertSame(expected, actual);
+        verify(service).getBySlug("yoga-mat-pro");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
     @DisplayName("getById forwards the id to the service")
     void getbyid_forwards_the_id_to_the_service() throws Exception {
         // Arrange

@@ -83,6 +83,12 @@ public class ProductService {
         return responseFactory.product(product);
     }
 
+    public ProductResponse getBySlug(String slug) {
+        Product product = productRepository.findBySlug(slug)
+                .orElseThrow(() -> new ApiException("Product not found", HttpStatus.NOT_FOUND));
+        return responseFactory.product(product);
+    }
+
     public ProductListResponse search(String query, Integer page, Integer size, String sort) {
         String term = query == null ? "" : query.trim();
         if (term.isEmpty()) {

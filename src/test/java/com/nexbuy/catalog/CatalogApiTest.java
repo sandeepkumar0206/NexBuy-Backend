@@ -253,6 +253,25 @@ class CatalogApiTest {
     }
 
     @Test
+    void returnsOneProductBySlug() throws Exception {
+        mockMvc.perform(get("/api/products/slug/yoga-mat-pro"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Yoga Mat Pro")))
+                .andExpect(jsonPath("$.slug", is("yoga-mat-pro")))
+                .andExpect(jsonPath("$.price", is(29.99)))
+                .andExpect(jsonPath("$.inStock", is(true)))
+                .andExpect(jsonPath("$.category.slug", is("sports-outdoors")))
+                .andExpect(jsonPath("$.images", notNullValue()));
+    }
+
+    @Test
+    void unknownProductSlugReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/api/products/slug/does-not-exist"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Product not found")));
+    }
+
+    @Test
     void missingOrMalformedProductIdFailsCleanly() throws Exception {
         mockMvc.perform(get("/api/products/999999"))
                 .andExpect(status().isNotFound())

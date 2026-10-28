@@ -222,6 +222,51 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("getBySlug returns the factory response for an existing product")
+    void getbyslug_returns_the_factory_response_for_an_existing_product() throws Exception {
+        // Arrange
+        // product found by slug, factory maps it
+        ProductRepository products = mock(ProductRepository.class);
+        CatalogResponseFactory factory = mock(CatalogResponseFactory.class);
+        Product product = TestFixtures.product(5L, "Yoga Mat Pro", "yoga-mat-pro", "29.99", 10, TestFixtures.category(1L, "Sports", "sports"));
+        ProductResponse expected = TestFixtures.productResponse(5L);
+        when(products.findBySlug("yoga-mat-pro")).thenReturn(Optional.of(product));
+        when(factory.product(product)).thenReturn(expected);
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), factory);
+
+        // Act
+        // fetch
+        ProductResponse response = service.getBySlug("yoga-mat-pro");
+
+        // Assert
+        // same response, one lookup, one mapping
+        assertSame(expected, response);
+        verify(products, times(1)).findBySlug("yoga-mat-pro");
+        verify(factory, times(1)).product(product);
+    }
+
+    @Test
+    @DisplayName("getBySlug throws 404 for an unknown slug")
+    void getbyslug_throws_404_for_an_unknown_slug() throws Exception {
+        // Arrange
+        // nothing stored
+        ProductRepository products = mock(ProductRepository.class);
+        CatalogResponseFactory factory = mock(CatalogResponseFactory.class);
+        when(products.findBySlug("nope")).thenReturn(Optional.empty());
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), factory);
+
+        // Act
+        // fetch missing
+        ApiException error = assertThrows(ApiException.class, () -> service.getBySlug("nope"));
+
+        // Assert
+        // 404 and no mapping
+        assertEquals("Product not found", error.getMessage());
+        assertEquals(HttpStatus.NOT_FOUND, error.getStatus());
+        verify(factory, never()).product(any());
+    }
+
+    @Test
     @DisplayName("getById returns the factory response for an existing product")
     void getbyid_returns_the_factory_response_for_an_existing_product() throws Exception {
         // Arrange

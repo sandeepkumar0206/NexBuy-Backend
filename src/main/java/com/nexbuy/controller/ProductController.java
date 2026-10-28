@@ -57,6 +57,11 @@ public class ProductController {
         return productService.listByCategorySlug(slug, page, size, sort);
     }
 
+    @GetMapping("/slug/{slug}")
+    public ProductResponse getBySlug(@PathVariable String slug) {
+        return productService.getBySlug(slug);
+    }
+
     @GetMapping("/{id}")
     public ProductResponse getById(@PathVariable Long id) {
         return productService.getById(id);
