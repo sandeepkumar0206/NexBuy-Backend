@@ -10,10 +10,9 @@ import com.nexbuy.testsupport.TestFixtures;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: builder used by seeder | BR: stock defaults to 0, images copied at build */
+/** Unit tests for ProductBuilder. */
 class ProductBuilderTest {
 
-    // MEDIUM
     @Test
     @DisplayName("build maps every configured value to the product")
     void build_maps_every_configured_value_to_the_product() throws Exception {
@@ -39,7 +38,6 @@ class ProductBuilderTest {
         assertSame(category, product.getCategory());
     }
 
-    // MEDIUM
     @Test
     @DisplayName("build defaults stock to zero with an empty image list")
     void build_defaults_stock_to_zero_with_an_empty_image_list() throws Exception {
@@ -58,7 +56,6 @@ class ProductBuilderTest {
         assertNull(product.getCategory());
     }
 
-    // MEDIUM
     @Test
     @DisplayName("build snapshots images so later builder changes do not leak")
     void build_snapshots_images_so_later_builder_changes_do_not_leak() throws Exception {

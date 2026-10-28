@@ -11,10 +11,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-/** Day 2 | AC: POST /api/auth/register, /login, /refresh | BR: register answers 201 */
+/** Unit tests for AuthController. */
 class AuthControllerTest {
 
-    // MEDIUM
     @Test
     @DisplayName("register delegates to the service and is annotated to answer 201")
     void register_delegates_to_the_service_and_is_annotated_to_answer_201() throws Exception {
@@ -39,7 +38,6 @@ class AuthControllerTest {
         assertEquals(HttpStatus.CREATED, status.value());
     }
 
-    // MEDIUM
     @Test
     @DisplayName("login delegates to the service unchanged")
     void login_delegates_to_the_service_unchanged() throws Exception {
@@ -62,7 +60,6 @@ class AuthControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("refresh delegates to the service unchanged")
     void refresh_delegates_to_the_service_unchanged() throws Exception {

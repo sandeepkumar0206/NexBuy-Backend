@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
@@ -31,6 +32,11 @@ public class ProductController {
         return productService.list(page, size, sort, categoryId, minPrice, maxPrice);
     }
 
+    @GetMapping("/featured")
+    public List<ProductResponse> featured() {
+        return productService.featured();
+    }
+
     @GetMapping("/search")
     public ProductListResponse search(
             @RequestParam("q") String query,
@@ -49,6 +55,11 @@ public class ProductController {
             @RequestParam(required = false) String sort
     ) {
         return productService.listByCategorySlug(slug, page, size, sort);
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ProductResponse getBySlug(@PathVariable String slug) {
+        return productService.getBySlug(slug);
     }
 
     @GetMapping("/{id}")

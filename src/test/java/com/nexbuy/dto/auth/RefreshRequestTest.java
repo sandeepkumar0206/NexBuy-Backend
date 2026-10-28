@@ -11,10 +11,9 @@ import jakarta.validation.Validator;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 2 | AC: POST /api/auth/refresh | BR: refresh token required */
+/** Unit tests for RefreshRequest. */
 class RefreshRequestTest {
 
-    // MEDIUM
     @Test
     @DisplayName("a blank refresh token violates the not-blank constraint")
     void a_blank_refresh_token_violates_the_not_blank_constraint() throws Exception {

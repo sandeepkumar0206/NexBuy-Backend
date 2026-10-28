@@ -10,10 +10,9 @@ import com.nexbuy.service.*;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: GET /api/categories and /{slug} | BR: thin delegation to the service */
+/** Unit tests for CategoryController. */
 class CategoryControllerTest {
 
-    // LOW
     @Test
     @DisplayName("list returns the service's categories unchanged")
     void list_returns_the_service_s_categories_unchanged() throws Exception {
@@ -35,7 +34,6 @@ class CategoryControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // LOW
     @Test
     @DisplayName("getBySlug forwards the slug to the service")
     void getbyslug_forwards_the_slug_to_the_service() throws Exception {

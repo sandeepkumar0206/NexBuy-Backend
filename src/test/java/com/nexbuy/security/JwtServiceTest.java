@@ -12,10 +12,9 @@ import io.jsonwebtoken.security.SignatureException;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 2 | AC: JWT utility generates and validates tokens | BR: access vs refresh type, signed, expiring */
+/** Unit tests for JwtService. */
 class JwtServiceTest {
 
-    // CRITICAL
     @Test
     @DisplayName("generateAccessToken signs a three-part token typed access for the user's email")
     void generateaccesstoken_signs_a_three_part_token_typed_access_for_the_user_s_email() throws Exception {
@@ -36,7 +35,6 @@ class JwtServiceTest {
         assertEquals(3, token.split("\\.").length);
     }
 
-    // CRITICAL
     @Test
     @DisplayName("generateRefreshToken is typed refresh and recognized by isRefreshToken")
     void generaterefreshtoken_is_typed_refresh_and_recognized_by_isrefreshtoken() throws Exception {
@@ -57,7 +55,6 @@ class JwtServiceTest {
         assertTrue(jwt.isTokenValid(token, "sam@example.com"));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("isTokenValid accepts an unexpired token for the matching email")
     void istokenvalid_accepts_an_unexpired_token_for_the_matching_email() throws Exception {
@@ -77,7 +74,6 @@ class JwtServiceTest {
         assertEquals("access", jwt.extractTokenType(token));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("isTokenValid rejects a different email")
     void istokenvalid_rejects_a_different_email() throws Exception {
@@ -97,7 +93,6 @@ class JwtServiceTest {
         assertNotEquals("other@example.com", jwt.extractEmail(token));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("parsing an expired token throws ExpiredJwtException")
     void parsing_an_expired_token_throws_expiredjwtexception() throws Exception {
@@ -117,7 +112,6 @@ class JwtServiceTest {
         assertThrows(ExpiredJwtException.class, () -> jwt.extractTokenType(token));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a token signed with another secret is rejected")
     void a_token_signed_with_another_secret_is_rejected() throws Exception {
@@ -138,7 +132,6 @@ class JwtServiceTest {
         assertThrows(SignatureException.class, () -> jwt.isTokenValid(token, "sam@example.com"));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a short secret is padded to a usable signing key")
     void a_short_secret_is_padded_to_a_usable_signing_key() throws Exception {
@@ -158,7 +151,6 @@ class JwtServiceTest {
         assertEquals(3, token.split("\\.").length);
     }
 
-    // CRITICAL
     @Test
     @DisplayName("a base64 secret is decoded before use")
     void a_base64_secret_is_decoded_before_use() throws Exception {

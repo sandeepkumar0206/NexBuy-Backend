@@ -29,6 +29,11 @@ public final class ProductSpecifications {
                 : cb.lessThanOrEqualTo(root.<BigDecimal>get("price"), max);
     }
 
+    /** Only products that have at least one unit left. */
+    public static Specification<Product> inStock() {
+        return (root, query, cb) -> cb.greaterThan(root.<Integer>get("stock"), 0);
+    }
+
     /** Case-insensitive match on product name or description. */
     public static Specification<Product> textMatches(String term) {
         return (root, query, cb) -> {

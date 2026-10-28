@@ -19,10 +19,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-/** Day 2 | AC: SecurityConfig (CORS, BCrypt password encoder) | BR: only configured origins, credentials allowed */
+/** Unit tests for SecurityConfig. */
 class SecurityConfigTest {
 
-    // HIGH
     @Test
     @DisplayName("passwordEncoder produces verifiable BCrypt hashes")
     void passwordencoder_produces_verifiable_bcrypt_hashes() throws Exception {
@@ -44,7 +43,6 @@ class SecurityConfigTest {
         assertFalse(encoder.matches("wrong", hash));
     }
 
-    // HIGH
     @Test
     @DisplayName("corsConfigurationSource trims and filters the configured origins")
     void corsconfigurationsource_trims_and_filters_the_configured_origins() throws Exception {
@@ -67,7 +65,6 @@ class SecurityConfigTest {
         assertEquals(List.of("*"), cors.getAllowedHeaders());
     }
 
-    // HIGH
     @Test
     @DisplayName("authenticationProvider is a DAO provider for username/password tokens")
     void authenticationprovider_is_a_dao_provider_for_username_password_tokens() throws Exception {

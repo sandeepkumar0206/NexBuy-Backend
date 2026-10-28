@@ -9,10 +9,9 @@ import com.nexbuy.exception.ApiException;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.http.HttpStatus;
 
-/** Day 3 | AC: return proper error responses | BR: default 400, overridable status */
+/** Unit tests for ApiException. */
 class ApiExceptionTest {
 
-    // MEDIUM
     @Test
     @DisplayName("the single-argument constructor defaults to 400")
     void the_single_argument_constructor_defaults_to_400() throws Exception {
@@ -31,7 +30,6 @@ class ApiExceptionTest {
         assertTrue(error instanceof RuntimeException);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("the two-argument constructor keeps the given status")
     void the_two_argument_constructor_keeps_the_given_status() throws Exception {

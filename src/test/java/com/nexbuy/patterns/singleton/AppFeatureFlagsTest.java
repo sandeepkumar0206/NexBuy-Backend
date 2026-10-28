@@ -7,10 +7,9 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 
-/** Pattern demo | AC: app-wide feature flags | BR: single shared instance, reviews on by default */
+/** Unit tests for AppFeatureFlags. */
 class AppFeatureFlagsTest {
 
-    // LOW
     @Test
     @DisplayName("getInstance always returns the same object")
     void getinstance_always_returns_the_same_object() throws Exception {
@@ -29,7 +28,6 @@ class AppFeatureFlagsTest {
         assertEquals(first.isReviewsEnabled(), second.isReviewsEnabled());
     }
 
-    // LOW
     @Test
     @DisplayName("setReviewsEnabled flips the shared flag and is visible through the instance")
     void setreviewsenabled_flips_the_shared_flag_and_is_visible_through_the_instance() throws Exception {

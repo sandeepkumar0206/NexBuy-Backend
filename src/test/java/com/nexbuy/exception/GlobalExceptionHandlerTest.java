@@ -25,10 +25,9 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-/** Day 3 | AC: global exception handler returns 400/401/404 | BR: JSON body with status + message, no internals leaked */
+/** Unit tests for GlobalExceptionHandler. */
 class GlobalExceptionHandlerTest {
 
-    // HIGH
     @Test
     @DisplayName("handleApiException responds with the exception's own status and message")
     void handleapiexception_responds_with_the_exception_s_own_status_and_message() throws Exception {
@@ -49,7 +48,6 @@ class GlobalExceptionHandlerTest {
         assertNotNull(response.getBody().get("timestamp"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleNotFound maps a missing resource to 404")
     void handlenotfound_maps_a_missing_resource_to_404() throws Exception {
@@ -69,7 +67,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(404, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleForbidden maps AccessDeniedException to 403")
     void handleforbidden_maps_accessdeniedexception_to_403() throws Exception {
@@ -89,7 +86,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(403, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleAuth maps bad credentials to 401 with a generic message")
     void handleauth_maps_bad_credentials_to_401_with_a_generic_message() throws Exception {
@@ -109,7 +105,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(401, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleValidation returns every field error in an errors map")
     void handlevalidation_returns_every_field_error_in_an_errors_map() throws Exception {
@@ -135,7 +130,6 @@ class GlobalExceptionHandlerTest {
         assertEquals("size must be between 6 and 100", fields.get("password"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleTypeMismatch names the offending parameter")
     void handletypemismatch_names_the_offending_parameter() throws Exception {
@@ -156,7 +150,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(400, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleMissingParam names the missing parameter")
     void handlemissingparam_names_the_missing_parameter() throws Exception {
@@ -176,7 +169,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(400, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleUnreadableBody hides parser details behind a generic 400")
     void handleunreadablebody_hides_parser_details_behind_a_generic_400() throws Exception {
@@ -196,7 +188,6 @@ class GlobalExceptionHandlerTest {
         assertFalse(String.valueOf(response.getBody().get("message")).contains("Unexpected token"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleMethodNotAllowed returns 405 naming the method")
     void handlemethodnotallowed_returns_405_naming_the_method() throws Exception {
@@ -216,7 +207,6 @@ class GlobalExceptionHandlerTest {
         assertEquals(405, response.getBody().get("status"));
     }
 
-    // HIGH
     @Test
     @DisplayName("handleGeneric returns 500 without leaking the exception message")
     void handlegeneric_returns_500_without_leaking_the_exception_message() throws Exception {

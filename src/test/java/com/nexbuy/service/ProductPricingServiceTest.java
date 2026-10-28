@@ -8,10 +8,9 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: products show a final price | BR: store-wide sale percent 0-99.99, 2dp HALF_UP */
+/** Unit tests for ProductPricingService. */
 class ProductPricingServiceTest {
 
-    // HIGH
     @Test
     @DisplayName("finalPrice returns the base price at scale 2 when no sale is configured")
     void finalprice_returns_the_base_price_at_scale_2_when_no_sale_is_configured() throws Exception {
@@ -30,7 +29,6 @@ class ProductPricingServiceTest {
         assertEquals(0, new BigDecimal("29.9").compareTo(result));
     }
 
-    // HIGH
     @Test
     @DisplayName("finalPrice applies the configured percentage discount")
     void finalprice_applies_the_configured_percentage_discount() throws Exception {
@@ -49,7 +47,6 @@ class ProductPricingServiceTest {
         assertTrue(result.compareTo(new BigDecimal("100.00")) < 0);
     }
 
-    // HIGH
     @Test
     @DisplayName("finalPrice rounds half up to two decimals")
     void finalprice_rounds_half_up_to_two_decimals() throws Exception {
@@ -68,7 +65,6 @@ class ProductPricingServiceTest {
         assertNotEquals(new BigDecimal("0.87"), result);
     }
 
-    // HIGH
     @Test
     @DisplayName("the constructor rejects a negative sale percent")
     void the_constructor_rejects_a_negative_sale_percent() throws Exception {
@@ -87,7 +83,6 @@ class ProductPricingServiceTest {
         assertNotNull(error);
     }
 
-    // HIGH
     @Test
     @DisplayName("the constructor rejects a sale percent of 100 or more")
     void the_constructor_rejects_a_sale_percent_of_100_or_more() throws Exception {

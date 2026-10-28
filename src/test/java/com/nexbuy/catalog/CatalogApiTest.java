@@ -10,6 +10,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -75,6 +78,16 @@ class CatalogApiTest {
     }
 
     @Test
+    void featuredReturnsEightInStockProductsNewestFirst() throws Exception {
+        mockMvc.perform(get("/api/products/featured"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(8)))
+                .andExpect(jsonPath("$[0].name", is("Insulated Hiking Backpack")))
+                .andExpect(jsonPath("$[*].name", not(hasItem("Cycling Helmet"))))
+                .andExpect(jsonPath("$[*].inStock", everyItem(is(true))));
+    }
+
+    @Test
     void lastPageHoldsTheRemainingProduct() throws Exception {
         mockMvc.perform(get("/api/products").param("page", "2"))
                 .andExpect(status().isOk())
@@ -88,6 +101,36 @@ class CatalogApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size", is(50)))
                 .andExpect(jsonPath("$.content", hasSize(25)));
+    }
+
+    @Test
+    void pageBeyondTheLastReturnsAnEmptyPageWithTheSameTotals() throws Exception {
+        mockMvc.perform(get("/api/products").param("page", "99"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(0)))
+                .andExpect(jsonPath("$.page", is(99)))
+                .andExpect(jsonPath("$.totalElements", is(25)))
+                .andExpect(jsonPath("$.totalPages", is(3)))
+                .andExpect(jsonPath("$.last", is(true)));
+    }
+
+    @Test
+    void negativePageAndZeroSizeFallBackToDefaults() throws Exception {
+        mockMvc.perform(get("/api/products").param("page", "-4").param("size", "0"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page", is(0)))
+                .andExpect(jsonPath("$.size", is(12)))
+                .andExpect(jsonPath("$.content", hasSize(12)));
+    }
+
+    @Test
+    void sortingKeepsWorkingAcrossPages() throws Exception {
+        mockMvc.perform(get("/api/products").param("sort", "price_asc").param("size", "5").param("page", "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(5)))
+                .andExpect(jsonPath("$.page", is(1)))
+                .andExpect(jsonPath("$.totalPages", is(5)))
+                .andExpect(jsonPath("$.first", is(false)));
     }
 
     @Test
@@ -207,6 +250,25 @@ class CatalogApiTest {
                 .andExpect(jsonPath("$.price", is(29.99)))
                 .andExpect(jsonPath("$.inStock", is(true)))
                 .andExpect(jsonPath("$.description", notNullValue()));
+    }
+
+    @Test
+    void returnsOneProductBySlug() throws Exception {
+        mockMvc.perform(get("/api/products/slug/yoga-mat-pro"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Yoga Mat Pro")))
+                .andExpect(jsonPath("$.slug", is("yoga-mat-pro")))
+                .andExpect(jsonPath("$.price", is(29.99)))
+                .andExpect(jsonPath("$.inStock", is(true)))
+                .andExpect(jsonPath("$.category.slug", is("sports-outdoors")))
+                .andExpect(jsonPath("$.images", notNullValue()));
+    }
+
+    @Test
+    void unknownProductSlugReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/api/products/slug/does-not-exist"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Product not found")));
     }
 
     @Test

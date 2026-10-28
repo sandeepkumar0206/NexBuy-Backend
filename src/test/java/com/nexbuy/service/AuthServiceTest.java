@@ -21,10 +21,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-/** Day 2 | AC: register/login/refresh API return tokens | BR: unique email, BCrypt hash, default role USER */
+/** Unit tests for AuthService. */
 class AuthServiceTest {
 
-    // CRITICAL
     @Test
     @DisplayName("register creates a USER account with trimmed lowercase email and hashed password")
     void register_creates_a_user_account_with_trimmed_lowercase_email_and_hashed_password() throws Exception {
@@ -60,7 +59,6 @@ class AuthServiceTest {
         assertEquals("Bearer", response.getTokenType());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("register rejects an email that is already registered")
     void register_rejects_an_email_that_is_already_registered() throws Exception {
@@ -89,7 +87,6 @@ class AuthServiceTest {
         verify(jwt, never()).generateAccessToken(any(User.class));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("login authenticates normalized credentials and returns the user's tokens")
     void login_authenticates_normalized_credentials_and_returns_the_user_s_tokens() throws Exception {
@@ -123,7 +120,6 @@ class AuthServiceTest {
         assertEquals("access-token", response.getAccessToken());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("login lets bad credentials propagate without loading the user")
     void login_lets_bad_credentials_propagate_without_loading_the_user() throws Exception {
@@ -150,7 +146,6 @@ class AuthServiceTest {
         verify(jwt, never()).generateAccessToken(any(User.class));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("login fails with the generic message when the user vanished after authentication")
     void login_fails_with_the_generic_message_when_the_user_vanished_after_authentication() throws Exception {
@@ -176,7 +171,6 @@ class AuthServiceTest {
         verify(jwt, never()).generateRefreshToken(any(User.class));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("refresh issues new tokens for a valid refresh token")
     void refresh_issues_new_tokens_for_a_valid_refresh_token() throws Exception {
@@ -208,7 +202,6 @@ class AuthServiceTest {
         verify(jwt).isTokenValid("refresh-1", "sam@example.com");
     }
 
-    // CRITICAL
     @Test
     @DisplayName("refresh rejects an access token with 401")
     void refresh_rejects_an_access_token_with_401() throws Exception {
@@ -233,7 +226,6 @@ class AuthServiceTest {
         verify(users, never()).findByEmail(anyString());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("refresh returns 404 when the token's user no longer exists")
     void refresh_returns_404_when_the_token_s_user_no_longer_exists() throws Exception {
@@ -259,7 +251,6 @@ class AuthServiceTest {
         verify(jwt, never()).isTokenValid(anyString(), anyString());
     }
 
-    // CRITICAL
     @Test
     @DisplayName("refresh returns 401 when the refresh token is no longer valid")
     void refresh_returns_401_when_the_refresh_token_is_no_longer_valid() throws Exception {
@@ -287,7 +278,6 @@ class AuthServiceTest {
         verify(jwt, never()).generateAccessToken(any(User.class));
     }
 
-    // CRITICAL
     @Test
     @DisplayName("refresh converts a malformed token failure into a 401")
     void refresh_converts_a_malformed_token_failure_into_a_401() throws Exception {

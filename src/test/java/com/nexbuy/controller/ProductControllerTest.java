@@ -12,10 +12,30 @@ import java.math.BigDecimal;
 import java.util.*;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 4 | AC: GET /api/products, /search, /category/{slug}, /{id} | BR: thin delegation to the service */
+/** Unit tests for ProductController. */
 class ProductControllerTest {
 
-    // MEDIUM
+    @Test
+    @DisplayName("featured returns the service list")
+    void featured_returns_the_service_list() throws Exception {
+        // Arrange
+        // service returns one product
+        ProductService service = mock(ProductService.class);
+        List<ProductResponse> expected = List.of(TestFixtures.productResponse(1L));
+        when(service.featured()).thenReturn(expected);
+        ProductController controller = new ProductController(service);
+
+        // Act
+        // call the endpoint method
+        List<ProductResponse> actual = controller.featured();
+
+        // Assert
+        // pass-through
+        assertSame(expected, actual);
+        verify(service).featured();
+        verifyNoMoreInteractions(service);
+    }
+
     @Test
     @DisplayName("list forwards all six query parameters to the service")
     void list_forwards_all_six_query_parameters_to_the_service() throws Exception {
@@ -39,7 +59,6 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("search maps q to the query argument")
     void search_maps_q_to_the_query_argument() throws Exception {
@@ -61,7 +80,6 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
     @Test
     @DisplayName("byCategory forwards the slug and paging arguments")
     void bycategory_forwards_the_slug_and_paging_arguments() throws Exception {
@@ -83,7 +101,27 @@ class ProductControllerTest {
         verifyNoMoreInteractions(service);
     }
 
-    // MEDIUM
+    @Test
+    @DisplayName("getBySlug forwards the slug to the service")
+    void getbyslug_forwards_the_slug_to_the_service() throws Exception {
+        // Arrange
+        // service returns a canned product
+        ProductService service = mock(ProductService.class);
+        ProductResponse expected = TestFixtures.productResponse(7L);
+        when(service.getBySlug("yoga-mat-pro")).thenReturn(expected);
+        ProductController controller = new ProductController(service);
+
+        // Act
+        // call the endpoint method
+        ProductResponse actual = controller.getBySlug("yoga-mat-pro");
+
+        // Assert
+        // pass-through
+        assertSame(expected, actual);
+        verify(service).getBySlug("yoga-mat-pro");
+        verifyNoMoreInteractions(service);
+    }
+
     @Test
     @DisplayName("getById forwards the id to the service")
     void getbyid_forwards_the_id_to_the_service() throws Exception {

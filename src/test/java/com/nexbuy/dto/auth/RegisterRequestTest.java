@@ -12,10 +12,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.DisplayName;
 
-/** Day 2 | AC: RegisterRequest DTO | BR: name 2-100, valid email, password 6-100 */
+/** Unit tests for RegisterRequest. */
 class RegisterRequestTest {
 
-    // HIGH
     @Test
     @DisplayName("a blank name, malformed email, and short password each violate a constraint")
     void a_blank_name_malformed_email_and_short_password_each_violate_a_constraint() throws Exception {
@@ -39,7 +38,6 @@ class RegisterRequestTest {
         assertFalse(violations.isEmpty());
     }
 
-    // HIGH
     @Test
     @DisplayName("a well-formed request has no violations")
     void a_well_formed_request_has_no_violations() throws Exception {

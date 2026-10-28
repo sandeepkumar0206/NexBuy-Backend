@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 public class ProductService {
 
     private static final int MAX_SEARCH_LENGTH = 100;
+    private static final int FEATURED_COUNT = 8;
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
@@ -65,8 +67,24 @@ public class ProductService {
         return findPage(spec, page, size, sort);
     }
 
+    /** Home page picks: the newest in-stock products. */
+    public List<ProductResponse> featured() {
+        Pageable pageable = PageRequest.of(0, FEATURED_COUNT, sortService.resolve(null));
+        return productRepository.findAll(ProductSpecifications.inStock(), pageable)
+                .getContent()
+                .stream()
+                .map(responseFactory::product)
+                .toList();
+    }
+
     public ProductResponse getById(Long id) {
         Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ApiException("Product not found", HttpStatus.NOT_FOUND));
+        return responseFactory.product(product);
+    }
+
+    public ProductResponse getBySlug(String slug) {
+        Product product = productRepository.findBySlug(slug)
                 .orElseThrow(() -> new ApiException("Product not found", HttpStatus.NOT_FOUND));
         return responseFactory.product(product);
     }
