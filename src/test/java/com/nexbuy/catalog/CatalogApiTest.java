@@ -1,5 +1,6 @@
 package com.nexbuy.catalog;
 
+import com.jayway.jsonpath.JsonPath;
 import com.nexbuy.entity.Category;
 import com.nexbuy.repository.CategoryRepository;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Comparator;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.everyItem;
 import static org.hamcrest.Matchers.hasItem;
@@ -196,6 +201,67 @@ class CatalogApiTest {
         mockMvc.perform(get("/api/products/category/unknown"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message", is("Category not found")));
+    }
+
+    @Test
+    void everyCategorySlugReturnsOnlyItsOwnFiveProducts() throws Exception {
+        for (String slug : new String[] {"electronics", "fashion", "home-kitchen", "books", "sports-outdoors"}) {
+            mockMvc.perform(get("/api/products/category/" + slug))
+                    .andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalElements", is(5)))
+                    .andExpect(jsonPath("$.content", hasSize(5)))
+                    .andExpect(jsonPath("$.content[*].category.slug", everyItem(is(slug))));
+        }
+    }
+
+    @Test
+    void categoryListingKeepsOutOfStockProducts() throws Exception {
+        mockMvc.perform(get("/api/products/category/sports-outdoors"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[?(@.name == 'Cycling Helmet')].inStock", contains(false)));
+    }
+
+    @Test
+    void categoryListingPagesWithinTheCategory() throws Exception {
+        mockMvc.perform(get("/api/products/category/books").param("size", "2").param("page", "2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", hasSize(1)))
+                .andExpect(jsonPath("$.totalElements", is(5)))
+                .andExpect(jsonPath("$.totalPages", is(3)))
+                .andExpect(jsonPath("$.last", is(true)))
+                .andExpect(jsonPath("$.content[0].category.slug", is("books")));
+    }
+
+    @Test
+    void categoryListingSortsByPriceWithinTheCategory() throws Exception {
+        String ascending = mockMvc.perform(get("/api/products/category/electronics").param("sort", "price_asc"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+        String descending = mockMvc.perform(get("/api/products/category/electronics").param("sort", "price_desc"))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        List<Double> up = JsonPath.read(ascending, "$.content[*].price");
+        List<Double> down = JsonPath.read(descending, "$.content[*].price");
+
+        assertEquals(5, up.size());
+        assertEquals(up.stream().sorted().toList(), up);
+        assertEquals(down.stream().sorted(Comparator.reverseOrder()).toList(), down);
+    }
+
+    @Test
+    void categoryListingRejectsAnUnknownSort() throws Exception {
+        mockMvc.perform(get("/api/products/category/books").param("sort", "cheapest"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void categorySlugMatchIsExact() throws Exception {
+        mockMvc.perform(get("/api/products/category/BOOKS"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is("Category not found")));
+        mockMvc.perform(get("/api/categories/BOOKS"))
+                .andExpect(status().isNotFound());
     }
 
     @Test
