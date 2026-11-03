@@ -23,6 +23,53 @@ import org.springframework.data.jpa.domain.Specification;
 class ProductSpecificationsTest {
 
     @Test
+    @DisplayName("inCategories returns no predicate when the ids are null or empty")
+    void incategories_returns_no_predicate_when_the_ids_are_null_or_empty() throws Exception {
+        // Arrange
+        // mocked criteria objects
+        Root<Product> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+
+        // Act
+        // evaluate with null and with an empty list
+        Predicate fromNull = ProductSpecifications.inCategories(null).toPredicate(root, query, cb);
+        Predicate fromEmpty = ProductSpecifications.inCategories(List.of()).toPredicate(root, query, cb);
+
+        // Assert
+        // skipped filters touch nothing
+        assertNull(fromNull);
+        assertNull(fromEmpty);
+        verifyNoInteractions(root);
+    }
+
+    @Test
+    @DisplayName("inCategories matches any of the category ids")
+    void incategories_matches_any_of_the_category_ids() throws Exception {
+        // Arrange
+        // root.get("category").get("id").in(ids) chain
+        Root<Product> root = mock(Root.class);
+        CriteriaQuery<?> query = mock(CriteriaQuery.class);
+        CriteriaBuilder cb = mock(CriteriaBuilder.class);
+        Path categoryPath = mock(Path.class);
+        Path idPath = mock(Path.class);
+        Predicate in = mock(Predicate.class);
+        List<Long> ids = List.of(1L, 2L);
+        when(root.get("category")).thenReturn(categoryPath);
+        when(categoryPath.get("id")).thenReturn(idPath);
+        when(idPath.in(ids)).thenReturn(in);
+
+        // Act
+        // evaluate
+        Predicate predicate = ProductSpecifications.inCategories(ids).toPredicate(root, query, cb);
+
+        // Assert
+        // the IN predicate is returned
+        assertSame(in, predicate);
+        verify(idPath).in(ids);
+    }
+
+    @Test
     @DisplayName("inStock requires stock greater than zero")
     void instock_requires_stock_greater_than_zero() throws Exception {
         // Arrange

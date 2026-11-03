@@ -46,10 +46,15 @@ public class ProductService {
             Integer page,
             Integer size,
             String sort,
-            Long categoryId,
+            List<Long> categoryIds,
             BigDecimal minPrice,
             BigDecimal maxPrice
     ) {
+        return findPage(filters(categoryIds, minPrice, maxPrice), page, size, sort);
+    }
+
+    /** Category and price filters shared by the list and search endpoints. Null or empty means no filter. */
+    private Specification<Product> filters(List<Long> categoryIds, BigDecimal minPrice, BigDecimal maxPrice) {
         if (minPrice != null && minPrice.signum() < 0) {
             throw new ApiException("minPrice cannot be negative");
         }
@@ -59,12 +64,10 @@ public class ProductService {
         if (minPrice != null && maxPrice != null && minPrice.compareTo(maxPrice) > 0) {
             throw new ApiException("minPrice cannot be greater than maxPrice");
         }
-
-        Specification<Product> spec = Specification
-                .where(ProductSpecifications.inCategory(categoryId))
+        return Specification
+                .where(ProductSpecifications.inCategories(categoryIds))
                 .and(ProductSpecifications.priceAtLeast(minPrice))
                 .and(ProductSpecifications.priceAtMost(maxPrice));
-        return findPage(spec, page, size, sort);
     }
 
     /** Home page picks: the newest in-stock products. */
@@ -89,7 +92,15 @@ public class ProductService {
         return responseFactory.product(product);
     }
 
-    public ProductListResponse search(String query, Integer page, Integer size, String sort) {
+    public ProductListResponse search(
+            String query,
+            List<Long> categoryIds,
+            BigDecimal minPrice,
+            BigDecimal maxPrice,
+            Integer page,
+            Integer size,
+            String sort
+    ) {
         String term = query == null ? "" : query.trim();
         if (term.isEmpty()) {
             throw new ApiException("Search query is required");
@@ -97,7 +108,10 @@ public class ProductService {
         if (term.length() > MAX_SEARCH_LENGTH) {
             throw new ApiException("Search query must be at most " + MAX_SEARCH_LENGTH + " characters");
         }
-        return findPage(ProductSpecifications.textMatches(term), page, size, sort);
+        Specification<Product> spec = Specification
+                .where(ProductSpecifications.textMatches(term))
+                .and(filters(categoryIds, minPrice, maxPrice));
+        return findPage(spec, page, size, sort);
     }
 
     public ProductListResponse listByCategorySlug(String slug, Integer page, Integer size, String sort) {

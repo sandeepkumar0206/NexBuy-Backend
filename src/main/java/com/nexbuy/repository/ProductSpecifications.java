@@ -4,6 +4,7 @@ import com.nexbuy.entity.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
 /** Optional filters for product queries. A null argument means "do not filter". */
 public final class ProductSpecifications {
@@ -15,6 +16,13 @@ public final class ProductSpecifications {
         return (root, query, cb) -> categoryId == null
                 ? null
                 : cb.equal(root.get("category").get("id"), categoryId);
+    }
+
+    /** Matches any of the given categories. Null or empty means "do not filter". */
+    public static Specification<Product> inCategories(Collection<Long> categoryIds) {
+        return (root, query, cb) -> categoryIds == null || categoryIds.isEmpty()
+                ? null
+                : root.get("category").get("id").in(categoryIds);
     }
 
     public static Specification<Product> priceAtLeast(BigDecimal min) {

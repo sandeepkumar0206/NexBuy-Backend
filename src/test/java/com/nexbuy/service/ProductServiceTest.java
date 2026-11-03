@@ -327,7 +327,7 @@ class ProductServiceTest {
 
         // Act
         // search with padded text
-        ProductListResponse response = service.search("  yoga ", 1, 5, "price_desc");
+        ProductListResponse response = service.search("  yoga ", null, null, null, 1, 5, "price_desc");
 
         // Assert
         // page/size/sort passed through
@@ -340,6 +340,44 @@ class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("search applies the category and price filters and still queries once")
+    void search_applies_the_category_and_price_filters_and_still_queries_once() throws Exception {
+        // Arrange
+        // repository returns an empty page
+        ProductRepository products = mock(ProductRepository.class);
+        when(products.findAll(TestFixtures.anySpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of()));
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), mock(CatalogResponseFactory.class));
+
+        // Act
+        // search with two categories and a price range
+        service.search("yoga", List.of(1L, 2L), new BigDecimal("5"), new BigDecimal("50"), null, null, null);
+
+        // Assert
+        // one repository query
+        verify(products, times(1)).findAll(TestFixtures.anySpec(), any(Pageable.class));
+    }
+
+    @Test
+    @DisplayName("search rejects an invalid price range before querying")
+    void search_rejects_an_invalid_price_range_before_querying() throws Exception {
+        // Arrange
+        // nothing should reach the repository
+        ProductRepository products = mock(ProductRepository.class);
+        ProductService service = TestFixtures.productService(products, mock(CategoryRepository.class), TestFixtures.sortService(), mock(CatalogResponseFactory.class));
+
+        // Act
+        // negative min, then min above max
+        ApiException negative = assertThrows(ApiException.class, () -> service.search("yoga", null, new BigDecimal("-1"), null, null, null, null));
+        ApiException reversed = assertThrows(ApiException.class, () -> service.search("yoga", null, new BigDecimal("50"), new BigDecimal("10"), null, null, null));
+
+        // Assert
+        // clear messages, no query
+        assertEquals("minPrice cannot be negative", negative.getMessage());
+        assertEquals("minPrice cannot be greater than maxPrice", reversed.getMessage());
+        TestFixtures.verifyNoPageQuery(products);
+    }
+
+    @Test
     @DisplayName("search rejects a blank query")
     void search_rejects_a_blank_query() throws Exception {
         // Arrange
@@ -349,7 +387,7 @@ class ProductServiceTest {
 
         // Act
         // search
-        ApiException error = assertThrows(ApiException.class, () -> service.search("   ", null, null, null));
+        ApiException error = assertThrows(ApiException.class, () -> service.search("   ", null, null, null, null, null, null));
 
         // Assert
         // 400 and no query
@@ -368,7 +406,7 @@ class ProductServiceTest {
 
         // Act
         // search
-        ApiException error = assertThrows(ApiException.class, () -> service.search(null, null, null, null));
+        ApiException error = assertThrows(ApiException.class, () -> service.search(null, null, null, null, null, null, null));
 
         // Assert
         // 400 and no query
@@ -388,7 +426,7 @@ class ProductServiceTest {
 
         // Act
         // search
-        ApiException error = assertThrows(ApiException.class, () -> service.search(tooLong, null, null, null));
+        ApiException error = assertThrows(ApiException.class, () -> service.search(tooLong, null, null, null, null, null, null));
 
         // Assert
         // 400 and no query

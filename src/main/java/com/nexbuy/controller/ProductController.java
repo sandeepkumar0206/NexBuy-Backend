@@ -25,11 +25,11 @@ public class ProductController {
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
             @RequestParam(required = false) String sort,
-            @RequestParam(required = false) Long categoryId,
+            @RequestParam(name = "categoryId", required = false) List<Long> categoryIds,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice
     ) {
-        return productService.list(page, size, sort, categoryId, minPrice, maxPrice);
+        return productService.list(page, size, sort, categoryIds, minPrice, maxPrice);
     }
 
     @GetMapping("/featured")
@@ -40,11 +40,14 @@ public class ProductController {
     @GetMapping("/search")
     public ProductListResponse search(
             @RequestParam("q") String query,
+            @RequestParam(name = "categoryId", required = false) List<Long> categoryIds,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) Integer page,
             @RequestParam(required = false) Integer size,
             @RequestParam(required = false) String sort
     ) {
-        return productService.search(query, page, size, sort);
+        return productService.search(query, categoryIds, minPrice, maxPrice, page, size, sort);
     }
 
     @GetMapping("/category/{slug}")

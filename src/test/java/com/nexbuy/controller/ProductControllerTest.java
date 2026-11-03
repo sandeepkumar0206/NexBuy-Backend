@@ -45,17 +45,17 @@ class ProductControllerTest {
         ProductListResponse expected = new ProductListResponse(List.of(), 1, 5, 0L, 0, false, true);
         BigDecimal min = new BigDecimal("1");
         BigDecimal max = new BigDecimal("9");
-        when(service.list(1, 5, "name", 3L, min, max)).thenReturn(expected);
+        when(service.list(1, 5, "name", List.of(3L), min, max)).thenReturn(expected);
         ProductController controller = new ProductController(service);
 
         // Act
         // call the endpoint method
-        ProductListResponse actual = controller.list(1, 5, "name", 3L, min, max);
+        ProductListResponse actual = controller.list(1, 5, "name", List.of(3L), min, max);
 
         // Assert
         // pass-through
         assertSame(expected, actual);
-        verify(service).list(1, 5, "name", 3L, min, max);
+        verify(service).list(1, 5, "name", List.of(3L), min, max);
         verifyNoMoreInteractions(service);
     }
 
@@ -66,17 +66,40 @@ class ProductControllerTest {
         // service returns a canned page
         ProductService service = mock(ProductService.class);
         ProductListResponse expected = new ProductListResponse(List.of(), 0, 12, 0L, 0, true, true);
-        when(service.search("yoga", null, null, "name")).thenReturn(expected);
+        when(service.search("yoga", null, null, null, null, null, "name")).thenReturn(expected);
         ProductController controller = new ProductController(service);
 
         // Act
         // call the endpoint method
-        ProductListResponse actual = controller.search("yoga", null, null, "name");
+        ProductListResponse actual = controller.search("yoga", null, null, null, null, null, "name");
 
         // Assert
         // pass-through
         assertSame(expected, actual);
-        verify(service).search("yoga", null, null, "name");
+        verify(service).search("yoga", null, null, null, null, null, "name");
+        verifyNoMoreInteractions(service);
+    }
+
+    @Test
+    @DisplayName("search forwards the category and price filters to the service")
+    void search_forwards_the_category_and_price_filters_to_the_service() throws Exception {
+        // Arrange
+        // service returns a canned page
+        ProductService service = mock(ProductService.class);
+        ProductListResponse expected = new ProductListResponse(List.of(), 0, 12, 0L, 0, true, true);
+        BigDecimal min = new BigDecimal("5");
+        BigDecimal max = new BigDecimal("50");
+        when(service.search("yoga", List.of(1L, 2L), min, max, 0, 12, "price_asc")).thenReturn(expected);
+        ProductController controller = new ProductController(service);
+
+        // Act
+        // call the endpoint method
+        ProductListResponse actual = controller.search("yoga", List.of(1L, 2L), min, max, 0, 12, "price_asc");
+
+        // Assert
+        // pass-through
+        assertSame(expected, actual);
+        verify(service).search("yoga", List.of(1L, 2L), min, max, 0, 12, "price_asc");
         verifyNoMoreInteractions(service);
     }
 

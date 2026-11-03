@@ -171,6 +171,58 @@ class CatalogApiTest {
     }
 
     @Test
+    void filtersBySeveralCategoriesAtOnce() throws Exception {
+        String electronics = String.valueOf(categoryRepository.findBySlug("electronics").orElseThrow().getId());
+        String books = String.valueOf(categoryRepository.findBySlug("books").orElseThrow().getId());
+
+        mockMvc.perform(get("/api/products").param("categoryId", electronics, books))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(10)))
+                .andExpect(jsonPath("$.content[*].category.slug", everyItem(org.hamcrest.Matchers.anyOf(is("electronics"), is("books")))));
+
+        mockMvc.perform(get("/api/products").param("categoryId", electronics + "," + books))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(10)));
+    }
+
+    @Test
+    void searchCanBeNarrowedByCategory() throws Exception {
+        String sports = String.valueOf(categoryRepository.findBySlug("sports-outdoors").orElseThrow().getId());
+        String books = String.valueOf(categoryRepository.findBySlug("books").orElseThrow().getId());
+
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("categoryId", sports))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(1)))
+                .andExpect(jsonPath("$.content[0].name", is("Yoga Mat Pro")));
+
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("categoryId", books))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(0)))
+                .andExpect(jsonPath("$.content", hasSize(0)));
+    }
+
+    @Test
+    void searchCanBeNarrowedByPrice() throws Exception {
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("maxPrice", "30"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(1)));
+
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("minPrice", "100"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements", is(0)));
+    }
+
+    @Test
+    void searchRejectsAnInvalidPriceRange() throws Exception {
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("minPrice", "50").param("maxPrice", "10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is("minPrice cannot be greater than maxPrice")));
+
+        mockMvc.perform(get("/api/products/search").param("q", "yoga").param("minPrice", "-1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void filtersByPriceRange() throws Exception {
         mockMvc.perform(get("/api/products").param("minPrice", "100").param("maxPrice", "150"))
                 .andExpect(status().isOk())
